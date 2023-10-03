@@ -1,0 +1,180 @@
+---
+title: "Visualization2"
+author: "Yaduo Wang"
+date: "2023-10-03"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(patchwork)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USW00022534", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2021-01-01",
+    date_max = "2023-12-31") |>
+  mutate(
+    name = recode(
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USW00022534 = "Molokai_HI",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) |>
+  select(name, id, everything())
+weather_df
+```
+
+```{r}
+weather_df |> 
+  ggplot(aes(x=tmin,y=tmax))+
+  geom_point(aes(color = name), alpha = .5)+
+  labs(
+    x = "Min daily temp (Degrees())",
+    y = "Max daily temp (Degrees())",
+    color = "Location",
+    title = "Min and Max temp",
+    caption = "Data from the rnoaa package")+
+  scale_x_continuous(
+    breaks = c(-15, 0, 15),
+    labels = c("-15 C", "0", "15"))+
+  scale_y_continuous(
+    position = "right", 
+    limits = c(0,30))+
+  viridis::scale_color_viridis(
+    name = "Location", 
+    discrete = TRUE
+  )
+
+```
+
+#Theme
+```{r}
+weather_df |> 
+  ggplot(aes(x=tmin,y=tmax))+
+  geom_point(aes(color = name), alpha = .5)+
+  labs(
+    x = "Min daily temp (Degrees())",
+    y = "Max daily temp (Degrees())",
+    color = "Location",
+    title = "Min and Max temp",
+    caption = "Data from the rnoaa package")+
+  viridis::scale_color_viridis(
+    discrete = TRUE
+  )+
+  theme_minimal()+
+  theme(legend.position = "bottom")
+```
+
+```{r}
+weather_df |> 
+  ggplot(aes(x=tmin,y=tmax))+
+  geom_point()+
+  geom_smooth(aes(color = name))
+```
+
+```{r}
+nyc_weather_df = 
+  weather_df |> 
+  filter(name == "CentralPark_NY")
+
+hawaii_weather_df = 
+  weather_df |> 
+  filter(name == "Molokai_HI")
+
+ggplot(nyc_weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_line(data = hawaii_weather_df)+
+  facet_grid(~name)
+```
+
+```{r}
+ggp_temp_scatter = 
+  weather_df |> 
+  ggplot(aes(x=tmin,y=tmax, color = name))+
+  geom_point()
+
+ggp_prep_weather = 
+  weather_df |> 
+  filter(prcp > 25) |> 
+  ggplot(aes(x = prcp, fill = name)) + 
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+tmax_date_p = 
+  weather_df |> 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "bottom")
+  
+(ggp_temp_scatter + ggp_prep_weather)/ tmax_date_p
+
+```
+
+```{r}
+weather_df |> 
+  mutate(
+    name = fct_relevel(name, c("Molokai_HI", "CentralPark_NY", "Waterhole_WA"))
+  ) |> 
+  ggplot(aes(x = name, y = tmax, color = name))+
+  geom_boxplot()
+```
+
+```{r}
+weather_df |> 
+  mutate(
+    name = fct_reorder(name, tmax)) |> 
+  ggplot(aes(x = name, y = tmax, fill = name))+
+  geom_violin()
+```
+
+```{r}
+pup_data = 
+  read_csv("FAS_pups.csv") |>
+  janitor::clean_names() |>
+  mutate(
+    sex = 
+      case_match(
+        sex, 
+        1 ~ "male", 
+        2 ~ "female"))
+litter_data = 
+  read_csv("FAS_litters.csv") |>
+  janitor::clean_names() |>
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+
+fas_data = left_join(pup_data, litter_data, by = "litter_number") 
+
+fas_data |> 
+  select(sex, dose, day_of_tx, pd_ears:pd_walk) |> 
+  pivot_longer(
+    pd_ears:pd_walk,
+    names_to = "outcome", 
+    values_to = "pn_day") |> 
+  drop_na() |> 
+  mutate(outcome = fct_reorder(outcome, pn_day)) |> 
+  ggplot(aes(x = dose, y = pn_day)) + 
+  geom_violin() + 
+  facet_grid(day_of_tx ~ outcome)
+```
+
