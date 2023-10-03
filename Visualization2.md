@@ -42,7 +42,7 @@ weather_df =
   rnoaa::meteo_pull_monitors(
     c("USW00094728", "USW00022534", "USS0023B17S"),
     var = c("PRCP", "TMIN", "TMAX"), 
-    date_min = "2021-01-01",
+    date_min = "2022-01-01",
     date_max = "2023-12-31") |>
   mutate(
     name = recode(
@@ -77,20 +77,20 @@ weather_df =
 weather_df
 ```
 
-    ## # A tibble: 3,009 × 6
+    ## # A tibble: 1,914 × 6
     ##    name           id          date        prcp  tmax  tmin
     ##    <chr>          <chr>       <date>     <dbl> <dbl> <dbl>
-    ##  1 CentralPark_NY USW00094728 2021-01-01   157   4.4   0.6
-    ##  2 CentralPark_NY USW00094728 2021-01-02    13  10.6   2.2
-    ##  3 CentralPark_NY USW00094728 2021-01-03    56   3.3   1.1
-    ##  4 CentralPark_NY USW00094728 2021-01-04     5   6.1   1.7
-    ##  5 CentralPark_NY USW00094728 2021-01-05     0   5.6   2.2
-    ##  6 CentralPark_NY USW00094728 2021-01-06     0   5     1.1
-    ##  7 CentralPark_NY USW00094728 2021-01-07     0   5    -1  
-    ##  8 CentralPark_NY USW00094728 2021-01-08     0   2.8  -2.7
-    ##  9 CentralPark_NY USW00094728 2021-01-09     0   2.8  -4.3
-    ## 10 CentralPark_NY USW00094728 2021-01-10     0   5    -1.6
-    ## # ℹ 2,999 more rows
+    ##  1 CentralPark_NY USW00094728 2022-01-01   201  13.3  10  
+    ##  2 CentralPark_NY USW00094728 2022-01-02    10  15     2.8
+    ##  3 CentralPark_NY USW00094728 2022-01-03     0   2.8  -5.5
+    ##  4 CentralPark_NY USW00094728 2022-01-04     0   1.1  -7.1
+    ##  5 CentralPark_NY USW00094728 2022-01-05    58   8.3  -0.5
+    ##  6 CentralPark_NY USW00094728 2022-01-06     0   5     1.1
+    ##  7 CentralPark_NY USW00094728 2022-01-07    97   1.1  -3.8
+    ##  8 CentralPark_NY USW00094728 2022-01-08     0  -1    -6.6
+    ##  9 CentralPark_NY USW00094728 2022-01-09    25   4.4  -1.6
+    ## 10 CentralPark_NY USW00094728 2022-01-10     0   4.4  -4.3
+    ## # ℹ 1,904 more rows
 
 ``` r
 weather_df |> 
@@ -114,7 +114,7 @@ weather_df |>
   )
 ```
 
-    ## Warning: Removed 456 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 322 rows containing missing values (`geom_point()`).
 
 <img src="Visualization2_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
 
@@ -137,7 +137,7 @@ weather_df |>
   theme(legend.position = "bottom")
 ```
 
-    ## Warning: Removed 33 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 30 rows containing missing values (`geom_point()`).
 
 <img src="Visualization2_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
 
@@ -148,11 +148,11 @@ weather_df |>
   geom_smooth(aes(color = name))
 ```
 
-    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-    ## Warning: Removed 33 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 30 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 33 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 30 rows containing missing values (`geom_point()`).
 
 <img src="Visualization2_files/figure-gfm/unnamed-chunk-5-1.png" width="90%" />
 
@@ -200,12 +200,12 @@ tmax_date_p =
 (ggp_temp_scatter + ggp_prep_weather)/ tmax_date_p
 ```
 
-    ## Warning: Removed 33 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 30 rows containing missing values (`geom_point()`).
 
-    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-    ## Warning: Removed 33 rows containing non-finite values (`stat_smooth()`).
-    ## Removed 33 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 30 rows containing non-finite values (`stat_smooth()`).
+    ## Removed 30 rows containing missing values (`geom_point()`).
 
 <img src="Visualization2_files/figure-gfm/unnamed-chunk-7-1.png" width="90%" />
 
@@ -218,7 +218,7 @@ weather_df |>
   geom_boxplot()
 ```
 
-    ## Warning: Removed 33 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 30 rows containing non-finite values (`stat_boxplot()`).
 
 <img src="Visualization2_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
 
@@ -233,11 +233,11 @@ weather_df |>
     ## Warning: There was 1 warning in `mutate()`.
     ## ℹ In argument: `name = fct_reorder(name, tmax)`.
     ## Caused by warning:
-    ## ! `fct_reorder()` removing 33 missing values.
+    ## ! `fct_reorder()` removing 30 missing values.
     ## ℹ Use `.na_rm = TRUE` to silence this message.
     ## ℹ Use `.na_rm = FALSE` to preserve NAs.
 
-    ## Warning: Removed 33 rows containing non-finite values (`stat_ydensity()`).
+    ## Warning: Removed 30 rows containing non-finite values (`stat_ydensity()`).
 
 <img src="Visualization2_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
 
