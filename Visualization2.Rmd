@@ -2,7 +2,7 @@
 title: "Visualization2"
 author: "Yaduo Wang"
 date: "2023-10-03"
-output: html_document
+output: github_document
 ---
 
 ```{r}
@@ -174,7 +174,7 @@ fas_data |>
   drop_na() |> 
   mutate(outcome = fct_reorder(outcome, pn_day)) |> 
   ggplot(aes(x = dose, y = pn_day)) + 
-  geom_violin() + 
+  geom_violin() +
   facet_grid(day_of_tx ~ outcome)
 ```
 
